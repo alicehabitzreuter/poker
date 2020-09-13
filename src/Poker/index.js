@@ -1,7 +1,7 @@
 class Poker{
     constructor(){
-        this.suits = ['H', 'C', 'D', 'S'];
-        this.numbers = [2, 3, 4, 5, 6, 7, 8, 9, 10, 'Jack', 'Queen', 'King', 'Ace'];
+        this.suits = ['\u2665', '\u2663', '\u2666', '\u2660'];
+        this.numbers = [2, 3, 4, 5, 6, 7, 8, 9, 10, 'J', 'Q', 'K', 'A'];
     }
 
     compare(a, b){

@@ -53,13 +53,14 @@ class Poker{
 
         for(let i = 4; i >= 1; i--){
             if((this.numbers.indexOf(hand[i].number) == this.numbers.indexOf(hand[i-1].number))){
+                hand[i].partOfAGame = true;
+                hand[i-1].partOfAGame = true;
                 contSame++;
                 streakSame++;
             }else{
                 streakSame = 0;
             }
         }
-
         return {contSame, streakSame};
     }
     
@@ -198,7 +199,7 @@ class Poker{
 
     highestCard(hand){
         let highest = 0;
-        for(let i = 4; i >= 1; i--){
+        for(let i = hand.length - 1; i >= 0; i--){
             if((this.numbers.indexOf(hand[i].number) > highest)){
                 highest = this.numbers.indexOf(hand[i].number);
             }

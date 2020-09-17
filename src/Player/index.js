@@ -12,39 +12,40 @@ class Player{
             pack.pack.shift();
         }
         // var card = new Card();
-        // card.suit = 'H';
+        // card.suit = '\u2665';
 
-        // card.number = 2;
+        // card.number = 'Q';
         // this.hand.push(card);
 
         // card = new Card();
-        // card.suit = 'C';
+        // card.suit = '\u2663';
         
-        // card.number = 10;
+        // card.number = '2';
         // this.hand.push(card);
 
         // card = new Card();
-        // card.suit = 'S';
+        // card.suit = '\u2660';
 
-        // card.number = 'Queen'
+        // card.number = '2'
         // this.hand.push(card);
 
         // card = new Card();
-        // card.suit = 'H';
+        // card.suit = '\u2665';
 
-        // card.number = 'Jack';
+        // card.number = '2';
         // this.hand.push(card);
 
         // card = new Card();
-        // card.suit = 'D';
+        // card.suit = '\u2666';
 
-        // card.number = 'Ace'
+        // card.number = '2'
         // this.hand.push(card);
 
     }
 
     getHand(){
         var hand = [];
+        console.log(this.hand);
         for(let i = 0; i < 5; i++){
             hand.push(this.hand[i].suit + this.hand[i].number)
         }

@@ -1,17 +1,17 @@
 class Poker{
     constructor(){
         this.suits = ['\u2665', '\u2663', '\u2666', '\u2660'];
-        this.numbers = [2, 3, 4, 5, 6, 7, 8, 9, 10, 'J', 'Q', 'K', 'A'];
+        this.numbers = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"];
     }
 
     compare(a, b){
-        const numbers = [2, 3, 4, 5, 6, 7, 8, 9, 10, 'Jack', 'Queen', 'King', 'Ace'];
+        const numbers = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"];
 
         const handA = a.number;
         const handB = b.number;
         
         let comparison = 0;
-        if (numbers.indexOf(handA) > numbers.indexOf(handB)) {
+        if (numbers.indexOf(handA.toString()) > numbers.indexOf(handB.toString())) {
             comparison = 1;
         } else if (numbers.indexOf(handA) < numbers.indexOf(handB)) {
             comparison = -1;
@@ -22,9 +22,11 @@ class Poker{
     sequential(hand){
         let seq = 1;
         let royal = false;
-        for(let i = 0; i < 4; i++){
-            if((this.numbers.indexOf(hand[i+1].number) - this.numbers.indexOf(hand[i].number)) == 1){
+        for(let i = 0; i < hand.length - 1; i++){
+            if((this.numbers.indexOf(hand[i+1].number.toString()) - (this.numbers.indexOf(hand[i].number.toString()))) == 1){
                 seq++;
+                hand[i].partOfAGame = true;
+                hand[i + 1].partOfAGame = true;
             }else{
                 seq--;
             }
@@ -37,9 +39,11 @@ class Poker{
 
     sameSuit(hand){
         let cont = 1;
-        for(let i = 0; i < 4; i++){
+        for(let i = 0; i < hand.length - 1; i++){
             if((this.suits.indexOf(hand[i+1].suit) == this.suits.indexOf(hand[i].suit))){
                 cont++;
+                hand[i].partOfAGame = true;
+                hand[i + 1].partOfAGame = true;
             }else{
                 cont--;
             }
@@ -48,17 +52,19 @@ class Poker{
     }
 
     sameNumber(hand){
-        let contSame = 1;
+        let contSame = 0;
         let streakSame = 0;
 
-        for(let i = 4; i >= 1; i--){
-            if((this.numbers.indexOf(hand[i].number) == this.numbers.indexOf(hand[i-1].number))){
-                hand[i].partOfAGame = true;
-                hand[i-1].partOfAGame = true;
+        for(let i = 0; i < hand.length - 1; i++){
+            if(hand[i].number == hand[i+1].number){
                 contSame++;
                 streakSame++;
+                
+                hand[i].partOfAGame = true;
+                hand[i + 1].partOfAGame = true;
             }else{
-                streakSame = 0;
+                hand[i].partOfAGame = false;
+                streakSame --;
             }
         }
         return {contSame, streakSame};
@@ -100,7 +106,7 @@ class Poker{
         else if(this.threeOfAKind(hand)){
             console.log('Three Of A Kind');
             return 4;
-
+            
         }
         else if(this.twoPair(hand)){
             console.log('Two Pair');
@@ -118,88 +124,153 @@ class Poker{
         }
     }
 
-    straightFlush(hand){
-        const {seq} = this.sequential(hand);
-        if(seq == 5 && this.sameSuit(hand) == 5){
-            return true;
-        }else{
-            return false;
-        }
-    }
-
+    
     royalFlush(hand){
         const {royal} = this.sequential(hand);
         if(this.sameSuit(hand) == 5 && royal == true){
             return true;
-        }else{
-            return false;
         }
+        return false;
+    }
+    straightFlush(hand){
+        const {seq} = this.sequential(hand);
+        if(seq == 5 && this.sameSuit(hand) == 5){
+            return true;
+        }
+        return false;
     }
 
     fourOfAKind(hand){
-        const {contSame, streakSame} = this.sameNumber(hand)
-        if(contSame == 4 && streakSame == 0){
-            return true;
+        let cont = 1;
+
+        for(let i = 0; i < hand.length; i++){
+            cont = 1;
+            for(let j = 1; j < hand.length; j++){
+                if(hand[i].number === hand[j].number){
+                    cont++;
+                    if(cont == 4){
+                        return true;
+                    }
+                    hand[i].partOfAGame = true;
+                }else{
+                    cont = 1;
+                    hand[i].partOfAGame = false;
+                }
+                i++;
+            }
         }
-        else{
-            return false;
-        }
+        return false;
     }
 
     fullHouse(hand){
-        const {contSame, streakSame} = this.sameNumber(hand)
-        if(contSame == 4 && streakSame == 1){
-            return true;
-        }else{
-            return false;
+        let cont = 1;
+        let j = 0;
+        let hasPair = false;
+        let hasThree = false;
+
+        let numberGame = [];
+
+        for(let k = 0; k < 5; k++){
+            numberGame[k] = hand[k];
         }
+
+            for(let i = 1; i < hand.length; i++){
+                if(hand[i].number.toString() == hand[j].number.toString()){
+                    cont++;
+                    if(cont == 3){
+                        hasThree = true;
+                        cont = 1;
+                        numberGame.splice(i, 1);
+                        numberGame.splice(i - 1, 1);
+                        numberGame.splice(i - 2, 1);
+                        hand[i].partOfAGame = true;
+
+                        if(numberGame[0].number.toString() == numberGame[1].number.toString()){
+                            hasPair = true;
+                            hand[i].partOfAGame = true;
+                        }
+                    }
+                }else{
+                    cont = 1;
+                    hand[i].partOfAGame = false;
+                }
+            j++;
+        }
+        return (hasPair && hasThree);
+
     }
     flush(hand){
         if(this.sameSuit(hand) == 5){
             return true;
-        }else{
-            return false;
         }
+        return false;
     }
     straight(hand){
         const {seq} = this.sequential(hand);
         if(seq == 5){
             return true;
-        }else{
-            return false;
         }
+        return false;
     }
     threeOfAKind(hand){
-        const {contSame, streakSame} = this.sameNumber(hand)
-        if(contSame == 3 && streakSame == 2){
-            return true;
+        let cont = 1;
+
+        for(let i = 0; i < hand.length; i++){
+            cont = 1;
+            for(let j = 1; j < hand.length; j++){
+                if(hand[i].number === hand[j].number){
+                    cont++;
+                    hand[i].partOfAGame = true;
+                    
+                    if(cont == 3){
+                        return true;
+                    }
+                }else{
+                    cont = 1;
+                    hand[i].partOfAGame = false;
+                }
+                i++;
+            }
         }
-        else{
-            return false;
-        }
+        return false;
+        
     }
     twoPair(hand){
-        const {contSame, streakSame} = this.sameNumber(hand)
-        if(contSame == 3 && streakSame == 0){
-            return true;
-        }
-        else{
-            return false;
-        }
+        let cardsRepeated = 1;
+        let pairs = 0;
+        let i = 0;
+
+        for(let j = 1; j < hand.length; j++){
+                if(hand[i].number === hand[j].number){
+                    hand[i].partOfAGame = true;
+                    cardsRepeated++;
+                    if(cardsRepeated == 2){
+                        cardsRepeated = 1;
+                        pairs++;
+                        if(pairs == 2){
+                            return true;
+                        }
+                    }
+                }
+                else{
+                    hand[i].partOfAGame = false;
+                }
+                i++;
+                cardsRepeated = 1;
+            }
+        return false;
     }
     pair(hand){
-        const {contSame, streakSame} = this.sameNumber(hand)
-        if(contSame == 2 && streakSame == 0){
+        const {contSame} = this.sameNumber(hand)
+        if(contSame == 1){
             return true;
         }
-        else{
-            return false;
-        }
+        return false;
     }
 
     highestCard(hand){
         let highest = 0;
-        for(let i = hand.length - 1; i >= 0; i--){
+        for(let i = 0; i < hand.length ; i++){
             if((this.numbers.indexOf(hand[i].number) > highest)){
                 highest = this.numbers.indexOf(hand[i].number);
             }

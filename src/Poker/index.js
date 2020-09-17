@@ -72,7 +72,6 @@ class Poker{
     
     classification(hand){
         hand.sort(this.compare);
-        console.log(hand);
 
         if(this.royalFlush(hand)){
             console.log('Royal Flush');

@@ -7,43 +7,43 @@ class Poker{
     compare(a, b){
         const numbers = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"];
 
-        const handA = a.number;
-        const handB = b.number;
+        const playerHandA = a.number;
+        const playerHandB = b.number;
         
         let comparison = 0;
-        if (numbers.indexOf(handA.toString()) > numbers.indexOf(handB.toString())) {
+        if (numbers.indexOf(playerHandA.toString()) > numbers.indexOf(playerHandB.toString())) {
             comparison = 1;
-        } else if (numbers.indexOf(handA) < numbers.indexOf(handB)) {
+        } else if (numbers.indexOf(playerHandA) < numbers.indexOf(playerHandB)) {
             comparison = -1;
         }
         return (comparison)  
     }
 
-    sequential(hand){
+    sequential(playerHand){
         let seq = 1;
         let royal = false;
-        for(let i = 0; i < hand.length - 1; i++){
-            if((this.numbers.indexOf(hand[i+1].number.toString()) - (this.numbers.indexOf(hand[i].number.toString()))) == 1){
+        for(let i = 0; i < playerHand.length - 1; i++){
+            if((this.numbers.indexOf(playerHand[i+1].number.toString()) - (this.numbers.indexOf(playerHand[i].number.toString()))) == 1){
                 seq++;
-                hand[i].partOfAGame = true;
-                hand[i + 1].partOfAGame = true;
+                playerHand[i].partOfAGame = true;
+                playerHand[i + 1].partOfAGame = true;
             }else{
                 seq--;
             }
         }
-        if(hand[0].number == 10 && seq == 5){
+        if(playerHand[0].number == 10 && seq == 5){
             royal = true
         }
         return {seq, royal};
     }
 
-    sameSuit(hand){
+    sameSuit(playerHand){
         let cont = 1;
-        for(let i = 0; i < hand.length - 1; i++){
-            if((this.suits.indexOf(hand[i+1].suit) == this.suits.indexOf(hand[i].suit))){
+        for(let i = 0; i < playerHand.length - 1; i++){
+            if((this.suits.indexOf(playerHand[i+1].suit) == this.suits.indexOf(playerHand[i].suit))){
                 cont++;
-                hand[i].partOfAGame = true;
-                hand[i + 1].partOfAGame = true;
+                playerHand[i].partOfAGame = true;
+                playerHand[i + 1].partOfAGame = true;
             }else{
                 cont--;
             }
@@ -51,109 +51,107 @@ class Poker{
         return cont;
     }
 
-    sameNumber(hand){
+    sameNumber(playerHand){
         let contSame = 0;
         let streakSame = 0;
 
-        for(let i = 0; i < hand.length - 1; i++){
-            if(hand[i].number == hand[i+1].number){
+        for(let i = 0; i < playerHand.length - 1; i++){
+            if(playerHand[i].number == playerHand[i+1].number){
                 contSame++;
                 streakSame++;
                 
-                hand[i].partOfAGame = true;
-                hand[i + 1].partOfAGame = true;
+                playerHand[i].partOfAGame = true;
+                playerHand[i + 1].partOfAGame = true;
             }else{
-                hand[i].partOfAGame = false;
+                playerHand[i].partOfAGame = false;
                 streakSame --;
             }
         }
         return {contSame, streakSame};
     }
     
-    classification(hand){
-        hand.sort(this.compare);
+    classification(playerHand){
+        playerHand.sort(this.compare);
 
-        if(this.royalFlush(hand)){
+        if(this.royalFlush(playerHand)){
             console.log('Royal Flush');
             return 10;
         }
-        else if(this.straightFlush(hand)){
+        else if(this.straightFlush(playerHand)){
             console.log('Straight Flush');
             return 9;
 
         }
-        else if(this.fourOfAKind(hand)){
+        else if(this.fourOfAKind(playerHand)){
             console.log('Four of a Kind');
             return 8;
 
         }
-        else if(this.fullHouse(hand)){
+        else if(this.fullHouse(playerHand)){
             console.log('Full House');
             return 7;
 
         }
-        else if(this.flush(hand)){
+        else if(this.flush(playerHand)){
             console.log('Flush');
             return 6;
 
         }
-        else if(this.straight(hand)){
+        else if(this.straight(playerHand)){
             console.log('Straight');
             return 5;
 
         }
-        else if(this.threeOfAKind(hand)){
+        else if(this.threeOfAKind(playerHand)){
             console.log('Three Of A Kind');
             return 4;
             
         }
-        else if(this.twoPair(hand)){
+        else if(this.twoPair(playerHand)){
             console.log('Two Pair');
             return 3;
 
         }
-        else if(this.pair(hand)){
+        else if(this.pair(playerHand)){
             console.log('A Pair');
             return 2;
 
-        }else{
-            console.log('Highest Card: ', this.highestCard(hand));
-            return 1;
-
         }
+        console.log('Highest Card: ', this.highestCard(playerHand));
+        return 1;
     }
 
     
-    royalFlush(hand){
-        const {royal} = this.sequential(hand);
-        if(this.sameSuit(hand) == 5 && royal == true){
+    royalFlush(playerHand){
+        const {royal} = this.sequential(playerHand);
+        if(this.sameSuit(playerHand) == 5 && royal == true){
             return true;
         }
         return false;
     }
-    straightFlush(hand){
-        const {seq} = this.sequential(hand);
-        if(seq == 5 && this.sameSuit(hand) == 5){
+    straightFlush(playerHand){
+        const {seq} = this.sequential(playerHand);
+        if(seq == 5 && this.sameSuit(playerHand) == 5){
             return true;
         }
         return false;
     }
 
-    fourOfAKind(hand){
+    fourOfAKind(playerHand){
         let cont = 1;
 
-        for(let i = 0; i < hand.length; i++){
+        for(let i = 0; i < playerHand.length; i++){
             cont = 1;
-            for(let j = 1; j < hand.length; j++){
-                if(hand[i].number === hand[j].number){
+            for(let j = 1; j < playerHand.length; j++){
+                if(playerHand[i].number === playerHand[j].number){
                     cont++;
                     if(cont == 4){
                         return true;
                     }
-                    hand[i].partOfAGame = true;
+                    playerHand[i].partOfAGame = true;
                 }else{
                     cont = 1;
-                    hand[i].partOfAGame = false;
+                    playerHand[i].partOfAGame = false;
                 }
                 i++;
             }
@@ -161,7 +159,7 @@ class Poker{
         return false;
     }
 
-    fullHouse(hand){
+    fullHouse(playerHand){
         let cont = 1;
         let j = 0;
         let hasPair = false;
@@ -170,11 +168,11 @@ class Poker{
         let numberGame = [];
 
         for(let k = 0; k < 5; k++){
-            numberGame[k] = hand[k];
+            numberGame[k] = playerHand[k];
         }
 
-            for(let i = 1; i < hand.length; i++){
-                if(hand[i].number.toString() == hand[j].number.toString()){
+            for(let i = 1; i < playerHand.length; i++){
+                if(playerHand[i].number.toString() == playerHand[j].number.toString()){
                     cont++;
                     if(cont == 3){
                         hasThree = true;
@@ -182,51 +180,51 @@ class Poker{
                         numberGame.splice(i, 1);
                         numberGame.splice(i - 1, 1);
                         numberGame.splice(i - 2, 1);
-                        hand[i].partOfAGame = true;
+                        playerHand[i].partOfAGame = true;
 
                         if(numberGame[0].number.toString() == numberGame[1].number.toString()){
                             hasPair = true;
-                            hand[i].partOfAGame = true;
+                            playerHand[i].partOfAGame = true;
                         }
                     }
                 }else{
                     cont = 1;
-                    hand[i].partOfAGame = false;
+                    playerHand[i].partOfAGame = false;
                 }
             j++;
         }
         return (hasPair && hasThree);
 
     }
-    flush(hand){
-        if(this.sameSuit(hand) == 5){
+    flush(playerHand){
+        if(this.sameSuit(playerHand) == 5){
             return true;
         }
         return false;
     }
-    straight(hand){
-        const {seq} = this.sequential(hand);
+    straight(playerHand){
+        const {seq} = this.sequential(playerHand);
         if(seq == 5){
             return true;
         }
         return false;
     }
-    threeOfAKind(hand){
+    threeOfAKind(playerHand){
         let cont = 1;
 
-        for(let i = 0; i < hand.length; i++){
+        for(let i = 0; i < playerHand.length; i++){
             cont = 1;
-            for(let j = 1; j < hand.length; j++){
-                if(hand[i].number === hand[j].number){
+            for(let j = 1; j < playerHand.length; j++){
+                if(playerHand[i].number === playerHand[j].number){
                     cont++;
-                    hand[i].partOfAGame = true;
+                    playerHand[i].partOfAGame = true;
                     
                     if(cont == 3){
                         return true;
                     }
                 }else{
                     cont = 1;
-                    hand[i].partOfAGame = false;
+                    playerHand[i].partOfAGame = false;
                 }
                 i++;
             }
@@ -234,14 +232,14 @@ class Poker{
         return false;
         
     }
-    twoPair(hand){
+    twoPair(playerHand){
         let cardsRepeated = 1;
         let pairs = 0;
         let i = 0;
 
-        for(let j = 1; j < hand.length; j++){
-                if(hand[i].number === hand[j].number){
-                    hand[i].partOfAGame = true;
+        for(let j = 1; j < playerHand.length; j++){
+                if(playerHand[i].number === playerHand[j].number){
+                    playerHand[i].partOfAGame = true;
                     cardsRepeated++;
                     if(cardsRepeated == 2){
                         cardsRepeated = 1;
@@ -252,28 +250,30 @@ class Poker{
                     }
                 }
                 else{
-                    hand[i].partOfAGame = false;
+                    playerHand[i].partOfAGame = false;
                 }
                 i++;
                 cardsRepeated = 1;
             }
         return false;
     }
-    pair(hand){
-        const {contSame} = this.sameNumber(hand)
+    pair(playerHand){
+        const {contSame} = this.sameNumber(playerHand)
         if(contSame == 1){
             return true;
         }
         return false;
     }
 
-    highestCard(hand){
+    highestCard(playerHand){
         let highest = 0;
-        for(let i = 0; i < hand.length ; i++){
-            if((this.numbers.indexOf(hand[i].number) > highest)){
-                highest = this.numbers.indexOf(hand[i].number);
+        for(let i = 0; i < playerHand.length ; i++){
+            if((this.numbers.indexOf(playerHand[i].number) > highest)){
+                highest = this.numbers.indexOf(playerHand[i].number);
             }
         }
         return this.numbers[highest];
     }
 }
+
+module.exports = Poker;

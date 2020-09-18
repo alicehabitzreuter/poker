@@ -1,6 +1,5 @@
 class Player{
     constructor(){
-        this.name = '';
         this.hand = [];
         this.winner = false;
     }
